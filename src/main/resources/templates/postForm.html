@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'박예린 포트폴리오 - ' + (${mode} == 'edit' ? '수정' : '등록')">박예린 포트폴리오 - 등록</title>
+    <link rel="stylesheet" th:href="@{/css/commons.css}">
+    <link rel="stylesheet" th:href="@{/css/board.css}">
+</head>
+<body>
+    <!-- 헤더 -->
+    <header th:replace="~{commons :: header}"></header>
+
+    <!-- 섹션 -->
+    <section>
+        <!-- 글쓰기/수정 -->
+        <form id="postForm" class="postContentWrap">
+            <!-- 정보 -->
+            <div class="postIntro">
+                <!-- 기초 정보 -->
+                <div class="inputsWrap">
+                    <!-- 분류 -->
+                    <select id="tag" class="input">
+                        <option value="web" th:selected="${post.postTag == 'web'}">WEB</option>
+                        <option value="game" th:selected="${post.postTag == 'game'}">GAME</option>
+                        <option value="ect" th:selected="${post.postTag == 'ect'}">ECT</option>
+                    </select>
+
+                    <!-- 제목 -->
+                    <input id="titleInput" class="input" type="text" placeholder="제목" th:value="${post.postTitle}">
+                </div>
+
+                <!-- 부제목 -->
+                <input id="subTitleInput" class="input" type="text" placeholder="부제목" th:value="${post.postSubTitle}">
+
+                <!-- GIT -->
+                <input id="gitInput" class="input" type="text" placeholder="GIT" th:value="${post.postGit}">
+
+                <!-- 썸네일 -->
+                <input id="thumInput" class="input" type="text" placeholder="썸네일 URL" th:value="${post.postThumbnail}">
+            </div>
+
+            <!-- 내용 -->
+            <textarea id="postContentInput" class="input" placeholder="내용" th:text="${post.postContent}"></textarea>
+
+            <!-- 버튼 -->
+            <div class="btnWrap">
+                <button type="button" class="btn" th:if="${mode == 'write'}" onclick="postSub()">등록</button>
+
+                <button type="button" class="btn" th:if="${mode == 'edit'}" th:onclick="|editSub(${post.postId})|">수정</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- 푸터 -->
+    <footer th:replace="~{commons :: footer}"></footer>
+
+    <script src="https://cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
+    <script th:inline="javascript">
+        // 에디터 적용
+        CKEDITOR.replace('postContentInput', { height: 400 });
+
+        // 등록
+        function postSub()
+        {
+            const postData = collectForm();
+            if (!postData) return;
+
+            fetch('/submit',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(postData)
+            })
+            .then(res => res.json())
+            .then(postId =>
+            {
+                if (postId)
+                {
+                    alert("등록 완료!");
+                    window.location.href = "/post/" + postId;
+                }
+                else { alert("등록 실패!"); }
+            })
+            .catch(err =>
+            {
+                console.error(err);
+                alert("오류가 발생했습니다.");
+            });
+        }
+
+        // 수정
+        function editSub(postId)
+        {
+            const postData = collectForm();
+            if (!postData) return;
+
+            fetch('/edit/' + postId + '/request',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(postData)
+            })
+            .then(res => res.json())
+            .then(id =>
+            {
+                if (id)
+                {
+                    alert("수정 완료!");
+                    window.location.href = "/post/" + id;
+                }
+                else { alert("수정 실패!"); }
+            })
+            .catch(err =>
+            {
+                console.error(err);
+                alert("오류가 발생했습니다.");
+            });
+        }
+
+        // 입력값 검증 + DTO 변환
+        function collectForm()
+        {
+            let tag = document.getElementById('tag').value;
+            let title = document.getElementById('titleInput').value.trim();
+            let subTitle = document.getElementById('subTitleInput').value.trim();
+            let thum = document.getElementById('thumInput').value.trim();
+            let content = CKEDITOR.instances.postContentInput.getData().trim();
+
+            if (title === "") { alert("제목을 입력하세요."); return null; }
+            if (subTitle === "") { alert("부제목을 입력하세요."); return null; }
+            if (thum === "") { alert("썸네일을 등록하세요."); return null; }
+            if (content === "") { alert("내용을 입력하세요."); return null; }
+
+            return {
+                postTitle: title,
+                postSubTitle: subTitle,
+                postGit: document.getElementById('gitInput').value.trim(),
+                postThumbnail: thum,
+                postTag: tag,
+                postContent: content
+            };
+        }
+    </script>
+</body>
+</html>
