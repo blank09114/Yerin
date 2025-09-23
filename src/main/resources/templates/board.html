@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'박예린 포트폴리오 - ' + ${boardType}">박예린 포트폴리오 - BOARD</title>
+    <link rel="stylesheet" th:href="@{/css/commons.css}">
+    <link rel="stylesheet" th:href="@{/css/board.css}">
+</head>
+<body>
+    <!-- 헤더 -->
+    <header th:replace="commons :: header"></header>
+
+    <!-- 섹션 -->
+    <section class="board">
+        <h1 class="class" th:text="${boardType}">BOARD</h1>
+
+        <!-- 게시글 리스트 -->
+        <div class="postList">
+            <a class="post" th:each="post : ${posts}" th:href="@{/post/{id}(id=${post.postId})}">
+                <!-- 썸네일 (배경 이미지로 처리) -->
+                <div class="postThumbnail" th:style="'background-image: url(\'' + ${post.postThumbnail} + '\')'"></div>
+
+                <!-- 제목 -->
+                <p class="postInfo title" th:text="${post.postTitle}">제목</p>
+
+                <!-- 부제목 -->
+                <p class="postInfo subTitle" th:text="${post.postSubTitle}">부제목</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer th:replace="commons :: footer"></footer>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!-- 헤더 -->
+<header th:fragment="header">
+    <div class="container headerContainer">
+        <!-- 메인 -->
+        <a class="toMain toLink" th:href="@{/}">PORTFOLIO</a>
+
+        <!-- 게시판 -->
+        <a class="toBoard toLink" th:href="@{/board/web}"
+           th:classappend="${boardType} == 'WEB' ? 'active' : ''">WEB</a>
+        <a class="toBoard toLink" th:href="@{/board/game}"
+           th:classappend="${boardType} == 'GAME' ? 'active' : ''">GAME</a>
+        <a class="toBoard toLink" th:href="@{/board/ect}"
+           th:classappend="${boardType} == 'ECT' ? 'active' : ''">ECT</a>
+
+        <!-- 버튼 -->
+        <div class="btnsWrap">
+            <!-- 로그인 한 경우에만 보이기 -->
+            <a class="btn" th:href="@{/write}" sec:authorize="isAuthenticated()">새 포트폴리오 등록</a>
+            <a class="btn" th:href="@{/logout}" sec:authorize="isAuthenticated()">LOGOUT</a>
+
+            <!-- 로그인 안 한 경우에만 보이기 -->
+            <a class="btn" th:href="@{/login}" sec:authorize="isAnonymous()">LOGIN</a>
+        </div>
+    </div>
+
+    <!-- 모바일 메뉴 -->
+    <div class="mob">
+        <div class="container mobContainer">
+            <a class="toBoardMob" th:href="@{/board/web}"
+               th:classappend="${boardType} == 'WEB' ? 'active' : ''">WEB</a>
+            <a class="toBoardMob" th:href="@{/board/game}"
+               th:classappend="${boardType} == 'GAME' ? 'active' : ''">GAME</a>
+            <a class="toBoardMob" th:href="@{/board/ect}"
+               th:classappend="${boardType} == 'ECT' ? 'active' : ''">ECT</a>
+        </div>
+    </div>
+</header>
+
+<!-- 푸터 -->
+<footer th:fragment="footer">
+    <p class="footerContent">
+        이메일: b1ank09114@gmail.com <br>
+        Copyright © 박예린. All right reserved.
+    </p>
+</footer>
+</html>

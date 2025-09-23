@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.parkyerin.yerin.mvc.YerinMapper">
+    <!-- 리스트 -->
+    <select id="selectPostsByTag" parameterType="string" resultType="com.parkyerin.yerin.mvc.PostDTO">
+        SELECT
+            post_id AS postId,
+            post_title AS postTitle,
+            post_sub_title AS postSubTitle,
+            post_thumbnail AS postThumbnail,
+            post_tag AS postTag
+        FROM post_tbl
+        WHERE post_tag = #{tag}
+        ORDER BY post_id DESC
+    </select>
+
+    <!-- 상세 -->
+    <select id="selectPostById" parameterType="int" resultType="com.parkyerin.yerin.mvc.PostDTO">
+        SELECT
+            post_id AS postId,
+            post_title AS postTitle,
+            post_sub_title AS postSubTitle,
+            post_thumbnail AS postThumbnail,
+            post_git AS postGit,
+            post_content AS postContent,
+            post_tag AS postTag
+        FROM post_tbl
+        WHERE post_id = #{postId}
+    </select>
+
+    <!-- 등록 -->
+    <insert id="insertPost" parameterType="com.parkyerin.yerin.mvc.PostDTO" useGeneratedKeys="true" keyProperty="postId">
+        INSERT INTO post_tbl
+        (
+            post_title,
+            post_sub_title,
+            post_git,
+            post_thumbnail,
+            post_tag,
+            post_content
+        )
+        VALUES
+        (
+            #{postTitle},
+            #{postSubTitle},
+            #{postGit},
+            #{postThumbnail},
+            #{postTag},
+            #{postContent}
+        )
+    </insert>
+
+    <!-- 수정 -->
+    <update id="updatePost" parameterType="com.parkyerin.yerin.mvc.PostDTO">
+        UPDATE post_tbl
+        SET
+            post_title = #{postTitle},
+            post_sub_title = #{postSubTitle},
+            post_git = #{postGit},
+            post_thumbnail = #{postThumbnail},
+            post_tag = #{postTag},
+            post_content = #{postContent}
+        WHERE post_id = #{postId}
+    </update>
+
+    <!-- 삭제 -->
+    <delete id="deletePost" parameterType="int">
+        DELETE FROM post_tbl
+        WHERE post_id = #{postId}
+    </delete>
+</mapper>
